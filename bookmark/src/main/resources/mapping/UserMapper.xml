@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bookmark.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.bookmark.entity.User" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="background_picture" property="backgroundPicture" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="BIGINT" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="last_modify_time" property="lastModifyTime" jdbcType="BIGINT" />
+    <result column="out_date" property="outDate" jdbcType="VARCHAR" />
+    <result column="pass_word" property="passWord" jdbcType="VARCHAR" />
+    <result column="profile_picture" property="profilePicture" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="validata_code" property="validataCode" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.bookmark.entity.User" extends="BaseResultMap" >
+    <result column="introduction" property="introduction" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, background_picture, create_time, email, last_modify_time, out_date, pass_word, 
+    profile_picture, user_name, validata_code
+  </sql>
+  <sql id="Blob_Column_List" >
+    introduction
+  </sql>
+
+  <!-- 主要业务的SQL语句 -->
+  <select id="findUserByUsernameOrEmail" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    *
+    from user
+    where user_name = #{userName}
+    or email = #{userName}
+  </select>
+
+
+
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from user
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.bookmark.entity.User" useGeneratedKeys="true" keyProperty="id">
+    insert into user (background_picture, create_time,
+      email, last_modify_time, out_date, 
+      pass_word, profile_picture, user_name, 
+      validata_code, introduction)
+    values (#{backgroundPicture,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT},
+      #{email,jdbcType=VARCHAR}, #{lastModifyTime,jdbcType=BIGINT}, #{outDate,jdbcType=VARCHAR}, 
+      #{passWord,jdbcType=VARCHAR}, #{profilePicture,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{validataCode,jdbcType=VARCHAR}, #{introduction,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bookmark.entity.User" >
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="backgroundPicture != null" >
+        background_picture,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="lastModifyTime != null" >
+        last_modify_time,
+      </if>
+      <if test="outDate != null" >
+        out_date,
+      </if>
+      <if test="passWord != null" >
+        pass_word,
+      </if>
+      <if test="profilePicture != null" >
+        profile_picture,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="validataCode != null" >
+        validata_code,
+      </if>
+      <if test="introduction != null" >
+        introduction,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="backgroundPicture != null" >
+        #{backgroundPicture,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyTime != null" >
+        #{lastModifyTime,jdbcType=BIGINT},
+      </if>
+      <if test="outDate != null" >
+        #{outDate,jdbcType=VARCHAR},
+      </if>
+      <if test="passWord != null" >
+        #{passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="profilePicture != null" >
+        #{profilePicture,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="validataCode != null" >
+        #{validataCode,jdbcType=VARCHAR},
+      </if>
+      <if test="introduction != null" >
+        #{introduction,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bookmark.entity.User" >
+    update user
+    <set >
+      <if test="backgroundPicture != null" >
+        background_picture = #{backgroundPicture,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyTime != null" >
+        last_modify_time = #{lastModifyTime,jdbcType=BIGINT},
+      </if>
+      <if test="outDate != null" >
+        out_date = #{outDate,jdbcType=VARCHAR},
+      </if>
+      <if test="passWord != null" >
+        pass_word = #{passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="profilePicture != null" >
+        profile_picture = #{profilePicture,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="validataCode != null" >
+        validata_code = #{validataCode,jdbcType=VARCHAR},
+      </if>
+      <if test="introduction != null" >
+        introduction = #{introduction,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.bookmark.entity.User" >
+    update user
+    set background_picture = #{backgroundPicture,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=BIGINT},
+      email = #{email,jdbcType=VARCHAR},
+      last_modify_time = #{lastModifyTime,jdbcType=BIGINT},
+      out_date = #{outDate,jdbcType=VARCHAR},
+      pass_word = #{passWord,jdbcType=VARCHAR},
+      profile_picture = #{profilePicture,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      validata_code = #{validataCode,jdbcType=VARCHAR},
+      introduction = #{introduction,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bookmark.entity.User" >
+    update user
+    set background_picture = #{backgroundPicture,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=BIGINT},
+      email = #{email,jdbcType=VARCHAR},
+      last_modify_time = #{lastModifyTime,jdbcType=BIGINT},
+      out_date = #{outDate,jdbcType=VARCHAR},
+      pass_word = #{passWord,jdbcType=VARCHAR},
+      profile_picture = #{profilePicture,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      validata_code = #{validataCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<script src="js/jquery.min.js"></script>
+	<script src="..static/js/bootstrap.min.js"></script>
+	<link href="..static/js/datatables/jquery.dataTables.min.css" rel="stylesheet"
+  type="text/css" />
+	<script src="..static/js/datatables/jquery.dataTables.min.js"></script>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<table id="datatable" class="table table-striped responsive-utilities jambo_table bulk_action">
+                    <thead>
+                      <tr class="headings">
+                      
+                        <th class="column-title">pdf名称 </th>
+                        <th class="column-title">下载</th>
+                        <th class="column-title">查看</th>
+                      </tr>
+                    </thead>
+									
+ </table>
+ <script type="text/javascript">
+ var table = $('#datatable').DataTable({
+		"ajax": {
+			           "url": "loadPdf",
+			            "dataSrc": "data"
+			        },
+	 
+	    "language" : {
+	      "lengthMenu" : "每页显示 _MENU_ 条信息",
+	      "zeroRecords" : "抱歉，没有获得数据",
+	      "info" : "正在查看 _PAGE_ 共 _PAGES_",
+	      "infoEmpty" : "抱歉，没有匹配数据",
+	      "infoFiltered" : "(从 _MAX_ 条数据中筛选)",
+	      "sLoadingRecords" : "正在加载...",
+	      "sProcessing" : "正在处理..."
+	    },
+		
+		"columns": [
+				{ "data": "book_name" },
+	            { "data": "author" },
+				{ "data": "action" }
+	        ]
+	  });
+
+	  table.on('draw.dt', function() {
+	    $("[data-toggle='popover']").popover();
+	  });
+ </script>
+</body>
+</html>

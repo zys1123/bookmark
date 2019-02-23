@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bookmark.mapper.CollectMapper" >
+  <resultMap id="BaseResultMap" type="com.bookmark.entity.Collect" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <result column="charset" property="charset" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="BIGINT" />
+    <result column="favorites_id" property="favoritesId" jdbcType="BIGINT" />
+    <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+    <result column="last_modify_time" property="lastModifyTime" jdbcType="BIGINT" />
+    <result column="logo_url" property="logoUrl" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.bookmark.entity.Collect" extends="BaseResultMap" >
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, category, charset, create_time, favorites_id, is_delete, last_modify_time, logo_url, 
+    remark, title, type, url, user_id
+  </sql>
+  <sql id="Blob_Column_List" >
+    description
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from collect
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getUserCollectCount" resultType="java.lang.Integer" parameterType="java.lang.Long" >
+    select
+    count(id)
+    from collect
+    where user_id = #{userId,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="getCollectByUserIdAndFavoritesId" resultMap="BaseResultMap" >
+    select
+    *
+    from collect
+    where user_id = #{userId,jdbcType=BIGINT}
+    and favorites_id = #{favoritesId,jdbcType=BIGINT}
+  </select>
+  
+  <resultMap id="CollectFavoritesMap" type="com.bookmark.entity.DatabaseCollect">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <result column="charset" property="charset" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="BIGINT" />
+    <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+    <result column="last_modify_time" property="lastModifyTime" jdbcType="BIGINT" />
+    <result column="logo_url" property="logoUrl" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <association property="favorites" javaType="com.bookmark.entity.Favorites">
+      <id column="favorites_id" property="id" jdbcType="BIGINT" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+    </association>
+    <association property="user" javaType="com.bookmark.entity.User">
+      <id column="user_id" property="id" jdbcType="BIGINT" />
+      <result column="background_picture" property="backgroundPicture" jdbcType="VARCHAR" />
+      <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    </association>
+  </resultMap>
+
+  <select id="getCollectFavoritesByUserId" resultMap="CollectFavoritesMap" >
+    select
+    *
+    from collect,favorites,user
+    where collect.favorites_id = favorites.id
+    and collect.user_id = user.id
+    <if test="userId != null and userId > 0" >
+      and collect.user_id = #{userId,jdbcType=BIGINT}
+    </if>
+    <if test="favoritesId != null and favoritesId > 0" >
+      and collect.favorites_id = #{favoritesId,jdbcType=BIGINT}
+    </if>
+
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from collect
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.bookmark.entity.Collect"  useGeneratedKeys="true" keyProperty="id">
+    insert into collect (id, category, charset,
+      create_time, favorites_id, is_delete,
+      last_modify_time, logo_url, remark,
+      title, type, url, user_id,
+      description)
+    values (#{id,jdbcType=BIGINT}, #{category,jdbcType=VARCHAR}, #{charset,jdbcType=VARCHAR},
+      #{createTime,jdbcType=BIGINT}, #{favoritesId,jdbcType=BIGINT}, #{isDelete,jdbcType=VARCHAR},
+      #{lastModifyTime,jdbcType=BIGINT}, #{logoUrl,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+      #{title,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT},
+      #{description,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bookmark.entity.Collect" >
+    insert into collect
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="category != null" >
+        category,
+      </if>
+      <if test="charset != null" >
+        charset,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="favoritesId != null" >
+        favorites_id,
+      </if>
+      <if test="isDelete != null" >
+        is_delete,
+      </if>
+      <if test="lastModifyTime != null" >
+        last_modify_time,
+      </if>
+      <if test="logoUrl != null" >
+        logo_url,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="category != null" >
+        #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="charset != null" >
+        #{charset,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="favoritesId != null" >
+        #{favoritesId,jdbcType=BIGINT},
+      </if>
+      <if test="isDelete != null" >
+        #{isDelete,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyTime != null" >
+        #{lastModifyTime,jdbcType=BIGINT},
+      </if>
+      <if test="logoUrl != null" >
+        #{logoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bookmark.entity.Collect" >
+    update collect
+    <set >
+      <if test="category != null" >
+        category = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="charset != null" >
+        charset = #{charset,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="favoritesId != null" >
+        favorites_id = #{favoritesId,jdbcType=BIGINT},
+      </if>
+      <if test="isDelete != null" >
+        is_delete = #{isDelete,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyTime != null" >
+        last_modify_time = #{lastModifyTime,jdbcType=BIGINT},
+      </if>
+      <if test="logoUrl != null" >
+        logo_url = #{logoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.bookmark.entity.Collect" >
+    update collect
+    set category = #{category,jdbcType=VARCHAR},
+      charset = #{charset,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=BIGINT},
+      favorites_id = #{favoritesId,jdbcType=BIGINT},
+      is_delete = #{isDelete,jdbcType=VARCHAR},
+      last_modify_time = #{lastModifyTime,jdbcType=BIGINT},
+      logo_url = #{logoUrl,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      description = #{description,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bookmark.entity.Collect" >
+    update collect
+    set category = #{category,jdbcType=VARCHAR},
+      charset = #{charset,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=BIGINT},
+      favorites_id = #{favoritesId,jdbcType=BIGINT},
+      is_delete = #{isDelete,jdbcType=VARCHAR},
+      last_modify_time = #{lastModifyTime,jdbcType=BIGINT},
+      logo_url = #{logoUrl,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
